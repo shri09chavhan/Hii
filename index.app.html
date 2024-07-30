@@ -1,0 +1,137 @@
+<!DOCTYPE>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>qr</title>
+  <style>
+    .cont {
+      margin-top: 40px;
+      transition: all 3s ease 1s;
+      width: 200px;
+      max-height: 450px;
+      background-color: white;
+      border: 0px solid black;
+      border-radius: 5px
+    }
+
+    body {
+      background-color: skyblue;
+      display: flex;
+      justify-content: center;
+
+    }
+
+    .input {
+
+      color: deepskyblue;
+      width: 200px;
+      height: 100px;
+      border: 0px solid black;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    input {
+
+      margin-left: 5px;
+      margin-right: 5px;
+
+      color: red;
+      font-weight: 20px
+    }
+
+    .gen {
+      border: 0px solid black;
+      width: 200px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #btn {
+      width: 140px;
+      height: 50px;
+      color: white;
+      background-color: mediumblue;
+      border: 0px solid mediumblue;
+      border-radius: 10px;
+    }
+
+    #qr {
+      /* border: 1px solid grey;*/
+      padding: 0px 10px 10px 10px;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cont">
+    <div class="input">
+
+      Enter text or url
+      <input type="text" id="in" placeholder="enter text or url">
+
+    </div>
+    <div class="gen">
+      <button id="btn">Generate QR</button>
+    </div>
+
+<hr>
+    <div id="qr">
+
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('btn').addEventListener('click', function(event) {
+      event.preventDefault();
+      var userInput = document.getElementById('in').value;
+
+
+      // Create a new image element
+      let img = document.createElement("img");
+      async function gqr(qrApi) {
+        try {
+          const api = await `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(userInput)}`
+          img.setAttribute("src", api);
+        }
+        catch (err) {
+          console.log(err);
+        }
+      }
+      gqr();
+      document.getElementById('qr').style.border = "1px solid grey"
+      // Apply styles to center the image within its parent element
+      img.style.display = "block"; // Ensures the image behaves like a block element
+      img.style.margin = "auto"; // Auto margin horizontally centers the image
+      img.style.paddingTop = "10px"
+
+
+      // Append the image element to an existing element with id 'qr' (assuming such an element exists)
+      let qrContainer = document.getElementById('qr');
+      qrContainer.innerHTML = ''; // Clear previous content if any
+      qrContainer.appendChild(img);
+
+      if (!userInput) {
+        let t = document.getElementById('qr')
+        t.innerHTML = "error : please enter text or url"
+        t.style.color = "red"
+        t.style.textAlign = "center"
+      }
+
+
+
+    });
+  </script>
+</body>
+
+</html>
