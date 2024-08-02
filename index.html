@@ -4,11 +4,257 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      background-color: skyblue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      font-size: 2em;
+      z-index: 999;
+      color: mediumblue;
+    }
+
+    .nav {
+      width: 250px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 0;
+      left: -300px;
+      height: 100%;
+      transition: all 0.5s ease;
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 1000;
+      overflow-y: scroll;
+    }
+
+    .nav.open {
+      left: 0;
+    }
+
+    .head {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      color: deepskyblue;
+    }
+
+    .content ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .content ul li {
+      margin-bottom: 15px;
+    }
+
+    .content ul li a {
+      text-decoration: none;
+      color: mediumblue;
+      font-size: 1.1em;
+    }
+
+    .content ul li a:hover {
+      color: white;
+      background-color: darkcyan;
+      border: 1px solid black;
+      border-radius: 15px;
+      
+    }
+
+    .cont {
+      width: 250px;
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .input {
+      color: deepskyblue;
+      margin-bottom: 20px;
+    }
+
+    .input input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      box-sizing: border-box;
+      margin: 10px 0;
+      font-size: 1em;
+    }
+
+    .gen {
+      margin-bottom: 20px;
+    }
+
+    #btn {
+      width: 140px;
+      height: 50px;
+      color: white;
+      background-color: mediumblue;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    #btn:hover {
+      background-color: blueviolet;
+    }
+
+    #qr {
+      text-align: center;
+    }
+
+    #download button a {
+      text-decoration: none;
+      color: white;
+      padding: 2px;
+    }
+
+    #download button {
+      background: red;
+      padding: 5px 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 3px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: black;
+    }
+    .p{
+      
+      display: flex;
+      justify-content: flex-end;
+    }
+    #back{
+      width: 40px;
+      position: relative;
+      bottom: 7.5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid black;
+      border-radius: 10px;
+      background-color: blue;
+      color: white;
+    }
+    .m{
+      position: relative;
+      bottom: 125px;
+      left: 85px
+    }
+    
+  </style>
 </head>
 
 <body>
+   <span class = "m"id="download">
+     <button><a href="/app-release.apk">Download App</a></button>
+   </span>
+  <div class="menu-icon" id="menu-icon">&#9776;</div>
+  <div class="nav" id="sidebar">
+    <div class="p">
+      
+    
+    <div id="back">&#10006</div>
+    </div>
+    <div class="head">
+      Shree QR Generator
+    </div>
+    <hr>
+    <div class="content">
+      <ul>
+        <li class="f"><a href="/app.html">Dashboard</a></li>
+        <li class="f"><a href="https://chavhanstech.blogspot.com">Blog</a></li>
+        <li class="f"><a href="/index2.html">About</a></li>
+        <li class="f"><a href="/index3.html">Contact</a></li>
+      </ul>
+    </div>
+    <span id="download">
+      <button><a href="/app-release.apk">Download App</a></button>
+    </span>
+  </div>
 
+  <h1>Shrihari Chavhan's Creation</h1>
+  <div class="cont">
+    <div class="input">
+      Enter text or URL
+      <input type="text" id="in" placeholder="Enter text or URL">
+    </div>
+    <div class="gen">
+      <button id="btn">Generate QR</button>
+    </div>
+    <div id="qr"></div>
+  </div>
+
+  <script>
+    document.getElementById('menu-icon').addEventListener('click', function() {
+      var sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    });
+
+    document.getElementById('back').addEventListener('click', function() {
+      var sidebar = document.getElementById('sidebar');
+      sidebar.classList.remove('open');
+    });
+
+    document.getElementById('btn').addEventListener('click', function(event) {
+      event.preventDefault();
+      var userInput = document.getElementById('in').value;
+
+      if (!userInput) {
+        let t = document.getElementById('qr');
+        t.innerHTML = "Error: Please enter text or URL";
+        t.style.color = "red";
+        t.style.textAlign = "center";
+        return;
+      }
+
+      let img = document.createElement("img");
+
+      async function gqr() {
+        try {
+          const api = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(userInput)}`;
+          img.setAttribute("src", api);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      gqr();
+      document.getElementById('qr').style.border = "1px solid grey";
+      img.style.display = "block";
+      img.style.margin = "auto";
+      img.style.paddingTop = "10px";
+      img.style.paddingBottom = "10px";
+      let qrContainer = document.getElementById('qr');
+      qrContainer.innerHTML = '';
+      qrContainer.appendChild(img);
+    });
+  </script>
 </body>
 
 </html>
